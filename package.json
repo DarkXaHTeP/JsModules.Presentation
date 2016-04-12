@@ -1,0 +1,17 @@
+{
+  "name": "jsmodules.presentation",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "jade": "jade index.jade --out public"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "jade": "1.11.0"
+  }
+}
