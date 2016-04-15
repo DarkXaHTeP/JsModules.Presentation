@@ -39,11 +39,15 @@ Reveal.initialize({
     showNotes: false,
 
     // Transition style
-    transition: 'convex', // none/fade/slide/convex/concave/zoom
+    transition: 'zoom', // none/fade/slide/convex/concave/zoom
 
     // Transition speed
     transitionSpeed: 'slow', // default/fast/slow
 
     // Transition style for full page slide backgrounds
-    backgroundTransition: 'fade' // none/fade/slide/convex/concave/zoom
+    backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+
+    dependencies: [
+        { src: 'scripts/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+    ]
 });
