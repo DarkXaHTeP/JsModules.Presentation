@@ -15,11 +15,13 @@ html(lang="en")
                     h4 from dark ages to ES2015
                     img(src="images/modules_illustration.jpg")
                 section
+                    h2 Let's start with simple things
+                    img(src="images/java-javascript.jpg")
+                section
                     h2 Agenda
                     ul
                         li Global scope
-                        li Single var
-                        li Self-executing anonymous function
+                        li Module pattern
                         li Revealing module pattern
                         li CommonJS in NodeJS
                         li Browserify
@@ -35,7 +37,7 @@ html(lang="en")
                         p JavaScript has two scopes: global and local. A variable that is declared outside a function definition is a global variable, and its value is accessible and modifiable throughout your program. A variable that is declared inside a function definition is local.
                     section
                         pre
-                            code(data-trim="data-trim") var a = 1; //global variable, becomes a property of window object also
+                            code.js var a = 1; //global variable, becomes a property of window object also
                                 |#{''}
                                 |function () {
                                 |  var b = 2; // local variable
@@ -56,34 +58,135 @@ html(lang="en")
                     section
                         p Always beware that someone will declare the variable with the same name as yours and the app will work incorrectly
                         img(src="images/unexpected.gif")
-                section
-                    h2 How can we deal with it?
-                    img(src="images/sceptic_woman.jpg")
+
                 section
                     section
-                        h2 Single VAR
+                        h2 How can we deal with it?
+                        img(src="images/sceptic_woman.jpg")
+                    section
+                        h2 Simple way
+                        img(src="images/name_conflict.jpg")
+                section
+                    section
+                        h2 Self-executing anonymous function
+                        p Creates local scope and executes it immediately
+                        pre
+                            code.js //Global scope is here
+                                |#{''}
+                                |(function(){
+                                |  //This is the local scope of the function, no globals are created
+                                |  var hello = 'Hello World!'
+                                |  console.log(hello);
+                                |#{''}
+                                |//Function is immediatly executed after creation
+                                |})();
+                    section
+                        h2 Module pattern
+                        p The most commonly used design pattern and widely accepted in a number of large projects such as jQuery, Dojo, ExtJS and YUI.
+                        h4 Pros/Cons
                         p
                             ul
-                                li Declare only one variable per module
-                                li Use the same filename as module name
-                        h2 Self-executing anonymous function
-                        p Create local scope and execute it immediately
+                                li Supports private data
+                                li Less clutter in the global namespace
+                                li Private methods and functions lose extendability since they are unaccessible.
                     section
                         pre
-                            code(data-trim="data-trim") //module1.js
-                                |(function () {
-                                |  //local variables, not visible outside of the function
-                                |  var a = 1;
-                                |  var b = 2;
-                                |#{''}
-                                |  //explicilty declaring single variable on the global scope
-                                |  window.module1 = {
-                                |    doMath: function(c) {
-                                |      return a + b + c;
-                                |    }
+                            code.js
+                                |(function( window, undefined ) {
+                                |  function MyModule() {
+                                |    // `this` refers to the instance of `MyModule` when created
+                                |    this.myMethod = function () {
+                                |      alert( 'my method' );
+                                |    };
                                 |  }
-                                |//calling the function after declaration
-                                |})();
+                                |#{''}
+                                |  // expose access to the constructor
+                                |  window.MyModule = MyModule;
+                                |})( window );
+                                |#{''}
+                                |// example usage
+                                |var myModule = new MyModule();
+                                |myModule.myMethod(); // alerts "my method"
+                    section
+                        h2 Revealing module pattern
+                        p The only difference from the module pattern is that this pattern was engineered as a way to ensure that all methods and variables are kept private until they are explicitly exposed.
+                        h4 Pros/Cons
+                        p
+                            ul
+                                li Supports private data
+                                li Less clutter in the global namespace
+                                li The syntax of our scripts are even more consistent
+                                li Explicitly defined public methods and variables which lead to increased readability
+                                li Private methods and functions lose extendability since they are unaccessible.
+                    section
+                        pre
+                            code.js
+                                |var myModule = (function( window, undefined ) {
+                                |  function myMethod() {
+                                |    alert( 'my method' );
+                                |  }
+                                |#{''}
+                                |  // explicitly return public methods when this object is instantiated
+                                |  return {
+                                |    someMethod : myMethod
+                                |  };
+                                |} )( window );
+                                |#{''}
+                                |//  example usage
+                                |MyModule.myMethod(); // undefined
+                                |MyModule.someMethod(); // alerts "my method"
+
+                section
+                    h2 Standardization of the modules
+                    p EcmaScript 3 was released in December 1999 and EcmaScript 5 in December 2009. None of them contained the out of the box implementation of the modules. Module pattern interpretation differs from project to project, modules are hard to reuse.
+                    img(src="images/gold_standard.jpg")
+                section
+                    section
+                        h2 CommonJS Modules specification
+                        img(src="images/CommonJS.png")
+                        p The CommonJS group defined a module format to solve JavaScript scope issues by making sure each module is executed in its own namespace. This is achieved by forcing modules to explicitly export those variables it wants to expose to the “universe”, and also by defining those other modules required to properly work.
+                    section
+                        h2 CommonJS Syntax
+                        p To achieve this CommonJS give you two tools:
+                            ol
+                                li the "require()" function, which allows to import a given module into the current scope.
+                                li the "module" object, which allows to export something from the current scope.
+                    section
+                        img(src="images/show_code.jpg")
+                    section
+                        h4 math.js
+                        pre
+                            code.js
+                                |exports.add = function() {
+                                |    var sum = 0, i = 0, args = arguments, l = args.length;
+                                |    while (i < l) {
+                                |        sum += args[i++];
+                                |    }
+                                |    return sum;
+                                |};
+                        h4 increment.js
+                        pre
+                            code.js
+                                |var add = require('math').add;
+                                |module.exports = function(val) {
+                                |    return add(val, 1);
+                                |};
+                        h4 program.js
+                        pre
+                            code.js
+                                |var inc = require('increment');
+                                |var a = 1;
+                                |inc(a); // 2
+                    section
+                        h2 Implementations of the spec
+                        p CommonJS modules' 'require()' function call will block the execution until the required module will be loaded into the memory and initialized. This approach cannot be used in the browsers, that's why CommonJS modules were applied to the node.js platform and become a standard there for a long time.
+                        img(src="images/nodejs.png")
+                section
+                    h2 Any thoughts about browsers?
+                    img(src="images/browsers.jpg")
+                section
+                    section
+                        h2 Browserify
 
 
 
