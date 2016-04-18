@@ -7,6 +7,7 @@ html(lang="en")
         link(rel="stylesheet", href="styles/reveal.css")
         link(rel="stylesheet", href="styles/theme/beige.css")
         link(rel="stylesheet", href="lib/css/zenburn.css")
+        link(rel="stylesheet", href="styles/styles.css")
     body
         .reveal
             .slides
@@ -23,12 +24,11 @@ html(lang="en")
                         li Global scope
                         li Module pattern
                         li Revealing module pattern
-                        li CommonJS in NodeJS
+                        li CommonJS modules
                         li Browserify
                         li AMD (RequireJS)
                         li ES2015 (ES6, ES.Next, Harmony) modules
                         li Current state and support
-                        li Compatibility with ASP.NET MVC and ASP.NET Core 1.0
                         li Questions?
                         li Demo overview
                 section
@@ -64,7 +64,10 @@ html(lang="en")
                         h2 How can we deal with it?
                         img(src="images/sceptic_woman.jpg")
                     section
-                        h2 Simple way
+                        h2 Panic
+                        img(src="images/yanukovich.gif")
+                    section
+                        h2 Find the creator of bad code
                         img(src="images/name_conflict.jpg")
                 section
                     section
@@ -86,9 +89,9 @@ html(lang="en")
                         h4 Pros/Cons
                         p
                             ul
-                                li Supports private data
-                                li Less clutter in the global namespace
-                                li Private methods and functions lose extendability since they are unaccessible.
+                                li.greened Supports private data
+                                li.greened Less clutter in the global namespace
+                                li.reded Private methods and functions lose extendability since they are unaccessible.
                     section
                         pre
                             code.js
@@ -113,11 +116,11 @@ html(lang="en")
                         h4 Pros/Cons
                         p
                             ul
-                                li Supports private data
-                                li Less clutter in the global namespace
-                                li The syntax of our scripts are even more consistent
-                                li Explicitly defined public methods and variables which lead to increased readability
-                                li Private methods and functions lose extendability since they are unaccessible.
+                                li.greened Supports private data
+                                li.greened Less clutter in the global namespace
+                                li.greened The syntax of our scripts are even more consistent
+                                li.greened Explicitly defined public methods and variables which lead to increased readability
+                                li.reded Private methods and functions lose extendability since they are unaccessible.
                     section
                         pre
                             code.js
@@ -181,12 +184,218 @@ html(lang="en")
                         h2 Implementations of the spec
                         p CommonJS modules' 'require()' function call will block the execution until the required module will be loaded into the memory and initialized. This approach cannot be used in the browsers, that's why CommonJS modules were applied to the node.js platform and become a standard there for a long time.
                         img(src="images/nodejs.png")
-                section
-                    h2 Any thoughts about browsers?
-                    img(src="images/browsers.jpg")
+                    section
+                        h2 Pros/Cons
+                        p
+                            ul
+                                li.greened Simple syntax - easy to use
+                                li.greened Execution in own context. Only explicit variables in the global namespace
+                                li.greened Modules format consistent and behavior is predictable
+                                li.greened NPM registry contains thousands of modules ready to use
+                                li.greened Dependencies can be stubbed during the testing.
+                                li.reded Synchronous execution
+                                li.reded Not supported in browsers
+                                li.reded Implemented in Node.JS only
                 section
                     section
-                        h2 Browserify
+                        h2 Any thoughts about browsers?
+                        img(src="images/browsers.jpg")
+                    section
+                        q If the mountain will not come to Mohammed, Mohammed must go to the mountain
+                        img(src="images/mountain.jpg")
+                section
+                    section
+                        img(src="images/browserify.png")
+                        p Browsers don't have the "require()" method defined, but Node.js does. With Browserify you can write code that uses require in the same way that you would use it in Node by bundling up all of your dependencies into single JavaScript file.
+                    section
+                        h2 How to use
+                        p Install Browserify from NPM
+                        pre
+                            code.bash npm install -g browserify
+                        p Compile CommonJS module with all it's dependencies into bundle
+                        pre
+                            code.bash browserify main.js --outfile=bundle.js
+                    section
+                        h2 Pros/Cons
+                        p
+                            ul
+                                li.greened All benefits of CommonJS in browser (and even more with transforms)
+                                li.greened Ability to reuse server code (e.g. models, helpers)
+                                li.reded Knowledge of the Node.JS platform is recommended
+                                li.reded Build step is required
+                                li.reded Generated code is hard to read (without source maps)
+                section
+                    p Not all developers were ready to build their frontend. Not all of the projects have Node.JS as a backend.
+                    img(src="images/alternative.jpg")
+                section
+                    section
+                        h2 Here comes AMD
+                        img(src="images/amd-chip.jpg")
+                    section
+                        h2 Asynchronous Module Definition (AMD)
+                        p The API specifies a mechanism for defining modules such that the module and its dependencies can be asynchronously loaded. This is particularly well suited for the browser environment.
+                    section
+                        h4 math.js
+                        pre
+                            code.js
+                                |define([], function() {
+                                |  return {
+                                |    add: function() {
+                                |      var sum = 0, i = 0, args = arguments, l = args.length;
+                                |      while (i < l) {
+                                |        sum += args[i++];
+                                |      }
+                                |      return sum;
+                                |    };
+                                |});
+                        h4 increment.js
+                        pre
+                            code.js
+                                |define(['math'], function(math) {
+                                |  return function(val) {
+                                |    return math.add(val, 1);
+                                |  };
+                                |});
+                        h4 program.js
+                        pre
+                            code.js
+                                |require(['increment'], function(increment) {
+                                |  var a = 1;
+                                |  inc(a); // 2
+                                |});
+                    section
+                        h2 Relations with CommonJS group
+                        p First version of AMD API started on the CommonJS wiki as a transport format, as Modules Transport/C, but it changed over time to also include a module definition API.
+                        p Consensus was not reached. The API was transferred over to its own wiki and discussion group.
+                    section
+                        h2 Existing implementations:
+                        p
+                            ul
+                                li Dojo Toolkit
+                                li ScriptManJS
+                                li RequireJS
+                        img(src="images/requirejs-logo.png")
+                    section
+                        h2 Pros/Cons
+                        p
+                            ul
+                                li.greened Asynchronous loading
+                                li.greened Designed for browsers, but can be used on server as well
+                                li.greened Execution in function local scope. Only explicit variables in the global namespace
+                                li.greened Modules format consistent and behavior is predictable
+                                li.greened Dependencies are loaded only if required
+                                li.reded More boilerplate code in comparison to CommonJS
+                                li.reded Mocking of dependencies during testing is not easy
+                section
+                    h2 UMD (Universal Module Definition)
+                    p The UMD pattern typically attempts to offer compatibility with the most popular script loaders of the day (e.g RequireJS amongst others). In many cases it uses AMD as a base, with special-casing added to handle CommonJS compatibility.
+                    p It is possible to create UMD modules using Browserify:
+                    pre
+                        code.bash browserify module.js --outfile=myModule.js --standalone
+                section
+                    blockquote Waiting for out of the box module support in JavaScript
+                    img(src="images/waiting-skeleton.jpg")
+                section
+                    section
+                        h2 EcmaScript 2015 modules
+                        p The ES2015 (former ES6, ES.Next, Harmony) brought the native modules support to the JavaScript among the many other innovations.
+                    section
+                        img(src="images/harold.jpg")
+                    section
+                        h4 math.js
+                        pre
+                            code.js
+                                | export function add() {
+                                |    var sum = 0, i = 0, args = arguments, l = args.length;
+                                |    while (i < l) {
+                                |        sum += args[i++];
+                                |    }
+                                |    return sum;
+                                | };
+                        h4 increment.js
+                        pre
+                            code.js
+                                | import { add } from 'math';
+                                | export default function(val) {
+                                |    return add(val, 1);
+                                | };
+                        h4 program.js
+                        pre
+                            code.js
+                                | import inc from 'increment';
+                                | var a = 1;
+                                | inc(a); // 2
+                    section
+                        h2 Design goals
+                        p
+                            ul
+                                li Exporting of single item is favored over multiple
+                                li Static module structure
+                                li Support for both synchronous and asynchronous loading
+                                li Support for cyclic dependencies between modules
+                        img(src="images/design.jpg")
+                    section
+                        h2 Pros/Cons
+                        p
+                            ul
+                                li.greened Very compact syntax
+                                li.greened Static module structure (helps with optimizations, static checking and more)
+                                li.greened Hopefully will end the fragmentation between the CommonJS and AMD (no more UMD)
+                                li.greened New browser APIs become modules instead of global variables or properties of navigator
+                                li.greened No more objects-as-namespaces (such as Math and JSON) for functions in ECMAScript 5
+                                li.reded No support in browsers and Node.JS for now
+                                li.reded Transpiling to CommonJS/AMD is required. A build step should be introduced
+                section
+                    h2 Current state
+                    p So where the modules will work?
+                    table
+                        thead
+                            tr
+                                th Modules
+                                th In browser
+                                th In Node.JS
+                                th In browser (build)
+                                th In Node (build)
+                        tbody
+                            tr
+                                td CommonJS
+                                td -
+                                td +
+                                td +
+                                td
+                            tr
+                                td AMD
+                                td +
+                                td -
+                                td +
+                                td +
+                            tr
+                                td UMD
+                                td +
+                                td +
+                                td +
+                                td
+                            tr
+                                td ES2015
+                                td -
+                                td -
+                                td +
+                                td +
+                section
+                    h4 My way of dealing with modules
+                    p
+                        ul
+                            li Use ES2015 syntax for own modules
+                            li Use babel transform to transpile modules to CommonJS syntax
+                            li Use Browserify to wrap third-party CommonJS dependencies and get bundle
+                    pre
+                        code.bash browserify src/index.js -t babelify | uglifyjs > public/bundle.js
+                    img(src="images/deal-with-it.gif")
+                section
+                    h2 Questions?
+                    img(src="images/questions.gif")
+                section
+                    h2 Demo overview
 
 
 
